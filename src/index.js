@@ -1,7 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
 dotenv.config()
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 import authRouter from './routes/auth.js'
 import departmentsRouter from './routes/departments.js'
@@ -35,10 +40,10 @@ app.use(cors({ origin: process.env.FRONTEND_URL || '*' }))
 app.use(express.json())
 // Serve built frontend assets in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('dist'))
+  app.use(express.static(path.join(__dirname, '../dist')))
   // All unknown routes should serve index.html (for React Router)
   app.get('*', (req, res) => {
-    res.sendFile('index.html', { root: 'dist' })
+    res.sendFile(path.join(__dirname, '../dist/index.html'))
   })
 }
 
