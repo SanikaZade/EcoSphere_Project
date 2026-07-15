@@ -14,27 +14,11 @@ const DEMO_USERS = [
   { id: 'demo-emp-001', name: 'Employee User', email: 'employee@ecosphere.com', password: 'emp123', role: 'Employee' },
 ]
 
-// POST /api/auth/register
-router.post('/register', async (req, res, next) => {
-  try {
-    const { name, email, password, role = 'Employee' } = req.body
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Name, email and password required' })
-    }
-    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email])
-    if (existing.rows.length > 0) {
-      return res.status(409).json({ error: 'Email already registered' })
-    }
-    const hash = await bcrypt.hash(password, 10)
-    const result = await pool.query(
-      'INSERT INTO users (name, email, password_hash, role) VALUES ($1,$2,$3,$4) RETURNING id, name, email, role',
-      [name, email, hash, role]
-    )
-    const user = result.rows[0]
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
-    res.status(201).json({ token, user })
-  } catch (err) { next(err) }
+// POST /api/auth/register — DISABLED: This platform uses fixed demo credentials only
+router.post('/register', (req, res) => {
+  res.status(403).json({ error: 'Registration is disabled. Please use the provided demo credentials.' })
 })
+
 
 // POST /api/auth/login
 router.post('/login', async (req, res, next) => {
