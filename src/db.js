@@ -9,7 +9,9 @@ dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const dbPath = path.join(__dirname, '../database.sqlite')
+// On Render: set DB_PATH=/var/data/database.sqlite (persistent disk mount)
+// Locally: falls back to the project root database.sqlite
+const dbPath = process.env.DB_PATH || path.join(__dirname, '../database.sqlite')
 
 let db = null;
 

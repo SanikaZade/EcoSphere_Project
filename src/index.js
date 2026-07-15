@@ -38,14 +38,6 @@ const app = express()
 
 app.use(cors({ origin: process.env.FRONTEND_URL || '*' }))
 app.use(express.json())
-// Serve built frontend assets in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')))
-  // All unknown routes should serve index.html (for React Router)
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'))
-  })
-}
 
 // Health endpoint
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
@@ -74,6 +66,15 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/scores', scoresRouter)
 
 app.use(errorHandler)
+
+// Serve built frontend assets in production (MUST be after all API routes)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../dist')))
+  // All unknown routes serve index.html (for React Router SPA)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'))
+  })
+}
 
 // Initialize Database schema and seed default users on startup
 await initDb()
