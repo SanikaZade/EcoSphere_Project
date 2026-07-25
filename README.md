@@ -89,7 +89,6 @@ npm run build
 ```
 
 ## Deployment
-
 This project is configured for deployment on Render. Make sure the environment variables are added correctly before deploying.
 
 ## About
